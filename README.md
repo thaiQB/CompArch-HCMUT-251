@@ -34,8 +34,7 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 	li $t0, 0
 	mtc1 $t0, $f0
 	cvt.s.w $f0, $f0
-	add.s $f3, $f0, $f0
-	```
+	add.s $f3, $f0, $f0```
 >3. `sub.s $f3, $f3, $f3`  
 	- Note that this will not work for `NaN`, `InF` values
 >
