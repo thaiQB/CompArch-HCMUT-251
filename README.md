@@ -30,11 +30,15 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 >*Apply to: Sect 1.4*  
 >There are some ways to reset a floating-point register:
 >1. `mtc1 $zero, $f3`
->2. ```asm
-	li $t0, 0
-	mtc1 $t0, $f0
-	cvt.s.w $f0, $f0
-	add.s $f3, $f0, $f0```
+>
+>2. 
+>	```asm
+>	li $t0, 0
+>	mtc1 $t0, $f0
+>	cvt.s.w $f0, $f0
+>	add.s $f3, $f0, $f0
+>	```
+>
 >3. `sub.s $f3, $f3, $f3`  
 	- Note that this will not work for `NaN`, `InF` values
 >
