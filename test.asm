@@ -1,8 +1,10 @@
 .data
-buffer:			.space 256 # 256 bytes for reading buffer
-signal_input:		.space 40  # 40 bytes for 10 float values
+buffer:			.space 256	# 256 bytes for reading buffer
+signal_input:		.space 40 	# 40 bytes for 10 float values
+signal_desired:		.space 40	# //
 
 inpFile:		.asciiz "input.txt"
+inpFile1:		.asciiz "desired.txt"
 outFile:		.asciiz "output.txt"
 error_msg:		.asciiz "Error opening file." 
 
@@ -94,13 +96,13 @@ meet_end:
 	# save float to signal_input
 	swc1 $f2, 0($t1)
 	
-	mtc1 $zero, $f1		# reset $f1
+	#mtc1 $zero, $f1	# reset $f1	# not reset $f1, keep value 10 to calc autocorrelation
 	mtc1 $zero, $f2		# reset $f2
 	
 ### 1.4.1. Testing retriving float values from `signal_input`
 #la $t0, signal_input
 #li $t1, 0
-loop_1_4_1:
+#loop_1_4_1:
 	#bge $t1, 10, outloop_1_4_1
 	# load value to $f12 to print to console
 	#lwc1 $f12, 0($t0)
@@ -115,8 +117,8 @@ loop_1_4_1:
     	#addi $t1, $t1, 1
     	#j loop_1_4_1
 
-outloop_1_4_1:
-##-------
+#outloop_1_4_1:
+##--------
 #========
 
 
@@ -126,14 +128,75 @@ outloop_1_4_1:
 la $t0, signal_input
 li $t1, 0
 
-
 loop_2_1:
 	# h(0) = (x(1)^2 + x(2)^2 + ... + x(10)^2) / 10
+	# result is kept in $f2
 	beq $t1, 10, endloop_2_1
 	lwc1 $f0, 0($t0)
 	mul.s $f0, $f0, $f0
-endloop_2_1:	
+	add.s $f2, $f2, $f0
+	# increase iterator
+	addi $t0, $t0, 4	# move to next float
+	addi $t1, $t1, 1
+	j loop_2_1
+
+endloop_2_1:
+	# divide $f2 by 10
+	div.s $f2, $f2, $f1	# $f1 value holds from line 97
 ##--------
+
+
+## 2.2. Calc h(1)
+la $t0, signal_input
+li $t1, 0
+
+loop_2_2:
+	# h(1) = (x(1) * x(2) + x(2) * x(3) + ... + x(8) * x(9)) / 10
+	# we are using biased estimator for this file
+	# result is kept in $f3
+	beq $t1, 9, endloop_2_2
+	lwc1 $f0, 0($t0)
+	addi $t2, $t0, 4	# access x(i + 1)
+	lwc1 $f4, 0($t2)
+	mul.s $f0, $f0, $f4
+	add.s $f3, $f3, $f0
+	# increse iterator
+	addi $t0, $t0, 4
+	addi $t1, $t1, 1
+	j loop_2_2
+
+endloop_2_2:
+	# divide $f3 by 10
+	div.s $f3, $f3, $f1
+##--------
+
+
+## 2.3. Calc h(2)
+la $t0, signal_input
+li $t1, 0
+mtc1 $zero, $f4		# reset $f4
+
+loop_2_3:
+	# h(2) = (x(1) * x(3) + x(2) * x(4) + ... + x(8) * x(10)) / 10
+	# result is kept in $f4
+	beq $t1, 8, endloop_2_3
+	lwc1 $f0, 0($t0)
+	addi $t2, $t0, 8	# access x(i + 2)
+	lwc1 $f5, 0($t2)
+	mul.s $f0, $f0, $f5
+	add.s $f4, $f4, $f0
+	# increase iterator
+	addi $t0, $t0, 4
+	addi $t1, $t1, 1
+	j loop_2_3
+	
+endloop_2_3:
+	# divide $f4 by 10
+	div.s $f4, $f4, $f1
+##--------
+
+
+
 #========
 j exit
 
