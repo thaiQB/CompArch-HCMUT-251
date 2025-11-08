@@ -37,6 +37,9 @@ move $a0, $s0	# $a0 = $s0
 la $a1, buffer
 li $a2, 256
 syscall
+
+li $a1, 0	# reset $a1
+li $a2, 0	# reset $a2
 ##--------
 
 
@@ -44,6 +47,10 @@ syscall
 li $v0, 16
 move $a0, $s0
 syscall
+
+li $v0, 0	# reset $v0
+li $s0, 0	# reset $s0
+li $a0, 0	# reset $a0
 ##--------
 
 
@@ -86,39 +93,49 @@ meet_end:
 	div.s $f2, $f2, $f1	# divide $f2 by 10 to set 1 decimal place
 	# save float to signal_input
 	swc1 $f2, 0($t1)
+	
+	mtc1 $zero, $f1		# reset $f1
 	mtc1 $zero, $f2		# reset $f2
 	
 ### 1.4.1. Testing retriving float values from `signal_input`
-la $t0, signal_input
-li $t1, 0
+#la $t0, signal_input
+#li $t1, 0
 loop_1_4_1:
-	bge $t1, 10, outloop_1_4_1
+	#bge $t1, 10, outloop_1_4_1
 	# load value to $f12 to print to console
-	lwc1 $f12, 0($t0)
-    	li $v0, 2
-    	syscall
+	#lwc1 $f12, 0($t0)
+    	#li $v0, 2
+    	#syscall
     	# print blank space
-    	addi $a0, $zero, ' '
-    	li $v0, 11
-    	syscall
+    	#addi $a0, $zero, ' '
+    	#li $v0, 11
+    	#syscall
     	# increment_iterator
-    	addi $t0, $t0, 4
-    	addi $t1, $t1, 1
-    	j loop_1_4_1
+    	#addi $t0, $t0, 4
+    	#addi $t1, $t1, 1
+    	#j loop_1_4_1
 
 outloop_1_4_1:
 ##-------
-
-
 #========
+
 
 
 # 2. CALC AUTO-CORRELATION h(0), h(1), h(2) OF INPUT SIGNAL x(n)
 ## 2.1. Calc h(0)
+la $t0, signal_input
+li $t1, 0
+
+
+loop_2_1:
+	# h(0) = (x(1)^2 + x(2)^2 + ... + x(10)^2) / 10
+	beq $t1, 10, endloop_2_1
+	lwc1 $f0, 0($t0)
+	mul.s $f0, $f0, $f0
+endloop_2_1:	
+##--------
+#========
 j exit
-
-
-
 
 
 

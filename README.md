@@ -20,16 +20,17 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 
 <br>
 
->[!Note] Note for section 1.4.
+>[!Note]
+>*Usage: Sect 1.4*
 >There are some ways to reset a floating-point register:
 >1. `mtc1 $zero, $f3`
->2. ```
+>2. ```asm
 	li $t0, 0
 	mtc1 $t0, $f0
 	cvt.s.w $f0, $f0
 	add.s $f3, $f0, $f0
 	```
 >3. `sub.s $f3, $f3, $f3`
->	- Note that this will not work for `NaN`, `InF` values
+	- Note that this will not work for `NaN`, `InF` values
 >
 >Cre: [StackOverFlow](https://stackoverflow.com/questions/22770778/how-to-set-a-floating-point-register-to-0-in-mips-or-clear-its-value)
