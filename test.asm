@@ -172,6 +172,7 @@ meet_hyphen:
 	j loop_1_2_incre_iterator
 
 handle_hyphen:
+	# $f2 = $f2 * 10 - $f0 to maintain negativity
 	sub.s $f2, $f2, $f0
 	j loop_1_2_incre_iterator
 
@@ -248,24 +249,24 @@ li $t1, 0	# reset $t1
 
 
 ### 1.3.1. Testing retriving float values from `signal_desired`
-la $t0, signal_desired
-li $t1, 0
-loop_1_2_1:
-	bge $t1, 10, outloop_1_2_1
+#la $t0, signal_desired
+#li $t1, 0
+#loop_1_2_1:
+	#bge $t1, 10, outloop_1_2_1
 	# load value to $f12 to print to console
-	lwc1 $f12, 0($t0)
-    	li $v0, 2
-    	syscall
+	#lwc1 $f12, 0($t0)
+    	#li $v0, 2
+    	#syscall
     	# print blank space
-    	addi $a0, $zero, ' '
-    	li $v0, 11
-    	syscall
+    	#addi $a0, $zero, ' '
+    	#li $v0, 11
+    	#syscall
     	# increment_iterator
-    	addi $t0, $t0, 4
-    	addi $t1, $t1, 1
-    	j loop_1_2_1
+    	#addi $t0, $t0, 4
+    	#addi $t1, $t1, 1
+    	#j loop_1_2_1
 
-outloop_1_2_1:
+#outloop_1_2_1:
 ##--------
 
 
@@ -362,6 +363,61 @@ mtc1 $zero, $f5		# reset $f5
 
 
 # 3. CALCULATE CROSS-CORRELATION BETWEEN INPUT SIGNAL x(n) and DESIRED SIGNAL d(n)
+sect_3:
+# Assign an FPU register to 10.0 for later calculations
+li $t0, 10
+mtc1 $t0, $f1
+cvt.s.w $f1, $f1 # $f1 = 10
+## 3.1. Calc r(0)
+la $t0, signal_input
+la $t1, signal_desired
+li $t2, 0			# h (the "lag" of the signal)
+jal cross_corr
+mov.s $f5, $f8
+##--------
+
+
+## 3.2. Calc r(1)
+la $t0, signal_input
+la $t1, signal_desired
+li $t2, 1
+jal cross_corr
+mov.s $f6, $f8
+##--------
+
+
+## 3.3. Calc r(2)
+la $t0, signal_input
+la $t1, signal_desired
+li $t2, 2
+jal cross_corr
+mov.s $f7, $f8
+
+mtc1 $zero, $f0		# reset $f0
+mtc1 $zero, $f8		# reset $f8
+mtc1 $zero, $f9		# reset $f9
+j exit
+##--------
+
+
+cross_corr:
+	sll $t2, $t2, 2		# $t2 *= 4
+	add $t1, $t1, $t2	# d(i + h)
+	srl $t2, $t2, 2		# $t2 /= 4
+	loop_cross:
+		beq $t2, 10, endloop_cross
+		lwc1 $f0, 0($t0)
+		lwc1 $f9, 0($t1)
+		mul.s $f9, $f0, $f9
+		add.s $f8, $f8, $f9
+		# increment iterator
+		addi $t0, $t0, 4
+		addi $t1, $t1, 4
+		addi $t2, $t2, 1
+		j loop_cross
+
+	endloop_cross:
+		jr $ra
 
 j exit
 
