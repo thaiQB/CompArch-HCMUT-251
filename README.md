@@ -15,23 +15,31 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 >It is recommended to put the first 3 files above **in the same directory** in order to run normally.
 
 ## Some notes
->[!Caution]
+>[!Warning]
 >When coding in MARS MIPS, always put the `.asciiz` variables at **the end** of the `.data` section to avoid `Runtime exception: store address not aligned on word boundary` error in MARS MIPS.
 
 <br>
 
->[!Warning]
+>[!Caution]
 >In the specfication of the assignment, it said that the **only** input file is the file `input.txt`, which is the combination (*a.k.a. the __sum__, according to the __test_case_files__*) of 2 signal: the **desired one** and the **noise**. But if we don't specify the **desired** signal for the MIPS file, how can we calculate the **cross-correlation** between the **input and the desired**???  
 > For my implementation, I declared 2 variables: `signal_input`, and `signal_desired` to **hold 2 files**: `input.txt` and `desired.txt`, but I wonder if this violates the specifications?
 
 <br>
 
+>[!Warning]
+>*Apply to: __Sect_1.2_*  
+>The caution above is written after I implemented the file processing for the **single file** `input.txt`, so I had to rework it. It's now working as a **procedure** to process **2 files**: `input.txt` and `desired.txt`.  
+>The problem is that in the old version, I used the register `$t0` to hold integer 10, which is then converted into float 10 and stored in `$f1`, after that it was used to hold the address of `buffer`. With the reworked version, however, the **"hold integer 10"** must be performed **after** the **"hold address of `buffer`"**! That why you'll see in version 0.5+, after being assigned `buffer`'s address, the value of `$t0` will be stored in `$sp` so it can perform the **"hold integer 10"**, then it is popped out and used to run the procedure (*which is, kinda overcomplicated, imo*).  
+>Again, sorry for my dumbness and laziness, but I really don't want to rewrite that section again since it had already taken me a whole afternoon to do that 😭.
+
+<br>
+
 >[!Note]
->*Apply to: Sect 1.4*  
->There are some ways to reset a floating-point register:
+>*Apply to: __Sect_1.2__*  
+>There are some ways to reset a floating-point register (*e.g. `$f3`*):
 >1. `mtc1 $zero, $f3`
 >
->2. Load integer 0 to an FP register:
+>2. Load integer 0 to an FP register and assign it to `$f3`:
 >	```asm
 >	li $t0, 0
 >	mtc1 $t0, $f0

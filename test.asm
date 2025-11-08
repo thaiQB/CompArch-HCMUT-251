@@ -12,13 +12,15 @@ error_msg:		.asciiz "Error opening file."
 
 .text
 # 1. INPUT FILE HANDLING
-## 1.1. Open The Signal File For Reading
+## 1.1. Open The Signal File For Reading, Then Save It In `buffer`
 la $a0, inpFile
 jal file_read
+li $a0, 0	# reset $a0
 j sect_1_2
 
 file_read:
 # Procedure `file_read`: read a file stored in $a0 and store it inside `buffer`
+# used reg:	$a0: contains the label holding input file name
 # consumed reg: $a0: used in `read_buffer` and `close_file`
 #		$a1: read mode
 #		$a2: need to be set to 0
@@ -101,19 +103,49 @@ close_file:
 ##--------
 
 
-## 1.2. Save Char From buffer As Float Values In `input_signal`
+## 1.2. Save Char From `buffer` As Float Values In `input_signal`
 sect_1_2:
-li $t0, 10
-mtc1 $t0, $f1
-cvt.s.w $f1, $f1 # f1 = 10
 la $t0, buffer
 la $t1, signal_input
+jal buffer_handling
+li $t0, 0	# reset $t0
+li $t1, 0	# reset $t1
+j sect_2
 
-loop_1_4:
-	lb $t2, 0($t0)			# load char, $t2 now holding ASCII code
+buffer_handling:
+# Procedure `buffer_handling`: Convert the characters in $t0 (`buffer`) to respective FP values in $t1 (`signal_input`)
+# used reg:	$t0: hold addr of `buffer`
+#		$t1: hold addr of `input_signal`
+# consumed reg: $t0: hold int 10 to loaded to $f1
+#		$t2: extract char from `buffer`
+#		$f0: hold char from `buffer` to converted to float
+#		$f1: hold float 10
+#		$f2: hold float to saved to `input_signal`
+	# Push $t2, $f0, $f1, $f2 into the stack
+	addi $sp, $sp, -4
+	sw $t2, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f0, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f1, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f2, 0($sp)
+	# Push $t0 into the stack
+	addi $sp, $sp, -4
+	sw $t0, 0($sp)
+	# Assign an FPU register to 10.0 for later calculations
+	li $t0, 10
+	mtc1 $t0, $f1
+	cvt.s.w $f1, $f1 # $f1 = 10
+	# Pop $t0 out of the stack
+	lw $t0, 0($sp)
+	addi $sp, $sp, 4
+
+loop_1_2:
+	lb $t2, 0($t0)			# load char from `buffer`, $t2 now holding ASCII code
 	beq $t2, 0, meet_end		# if meets `\0` (end of file), endloop
 	beq $t2, 32, meet_space		# if meets ` ` (space), save float
-	beq $t2, 46, loop_1_4_incre_iterator
+	beq $t2, 46, loop_1_2_incre_iterator
 					# if meets `.`, continue
 	
 	addi $t2, $t2, -48		# convert ASCII code to number
@@ -123,9 +155,9 @@ loop_1_4:
 	mul.s $f2, $f2, $f1
 	add.s $f2, $f2, $f0
 
-loop_1_4_incre_iterator:
+loop_1_2_incre_iterator:
 	addi $t0, $t0, 1	# move to the next char of buffer
-	j loop_1_4
+	j loop_1_2
 	
 meet_space:
 	# divide $f2 by 10 to set 1 decimal place
@@ -134,7 +166,7 @@ meet_space:
 	swc1 $f2, 0($t1)
 	mtc1 $zero, $f2		# reset $f2
 	addi $t1, $t1, 4	# move to next word of signal_input
-	j loop_1_4_incre_iterator
+	j loop_1_2_incre_iterator
 	
 meet_end:
 	# save last float
@@ -142,14 +174,27 @@ meet_end:
 	# save float to signal_input
 	swc1 $f2, 0($t1)
 	
-	#mtc1 $zero, $f1	# reset $f1	# not reset $f1, keep value 10 to calc autocorrelation
+	mtc1 $zero, $f1		# reset $f1
 	mtc1 $zero, $f2		# reset $f2
 	
-### 1.4.1. Testing retriving float values from `signal_input`
+	# Pop the stack (from `buffer_handling`)
+	lwc1 $f2, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f1, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f0, 0($sp)
+	addi $sp, $sp, 4
+	lw $t2, 0($sp)
+	addi $sp, $sp, 4
+	# Return to the caller (of `buffer_handling`)
+	jr $ra
+##--------
+
+### 1.2.1. Testing retriving float values from `signal_input`
 #la $t0, signal_input
 #li $t1, 0
-#loop_1_4_1:
-	#bge $t1, 10, outloop_1_4_1
+#loop_1_2_1:
+	#bge $t1, 10, outloop_1_2_1
 	# load value to $f12 to print to console
 	#lwc1 $f12, 0($t0)
     	#li $v0, 2
@@ -161,15 +206,20 @@ meet_end:
     	# increment_iterator
     	#addi $t0, $t0, 4
     	#addi $t1, $t1, 1
-    	#j loop_1_4_1
+    	#j loop_1_2_1
 
-#outloop_1_4_1:
+#outloop_1_2_1:
 ##--------
 #========
 
 
 
 # 2. CALC AUTO-CORRELATION h(0), h(1), h(2) OF INPUT SIGNAL x(n)
+sect_2:
+# Assign an FPU register to 10.0 for later calculations
+li $t0, 10
+mtc1 $t0, $f1
+cvt.s.w $f1, $f1 # $f1 = 10
 ## 2.1. Calc h(0)
 la $t0, signal_input
 li $t1, 0
@@ -240,6 +290,13 @@ endloop_2_3:
 	# divide $f4 by 10
 	div.s $f4, $f4, $f1
 ##--------
+
+li $t0, 0		# reset $t0
+li $t1, 0		# reset $t1
+li $t2, 0		# reset $t2
+mtc1 $zero, $f0		# reset $f0
+mtc1 $zero, $f1		# reset $f1
+mtc1 $zero, $f5		# reset $f5
 #========
 
 
