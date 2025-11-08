@@ -31,7 +31,7 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 >There are some ways to reset a floating-point register:
 >1. `mtc1 $zero, $f3`
 >
->2. 
+>2. Load integer 0 to an FP register:
 >	```asm
 >	li $t0, 0
 >	mtc1 $t0, $f0
