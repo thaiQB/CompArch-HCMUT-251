@@ -110,7 +110,7 @@ la $t1, signal_input
 jal buffer_handling
 li $t0, 0	# reset $t0
 li $t1, 0	# reset $t1
-j sect_2
+j sect_1_3
 
 buffer_handling:
 # Procedure `buffer_handling`: Convert the characters in $t0 (`buffer`) to respective FP values in $t1 (`signal_input`)
@@ -118,12 +118,15 @@ buffer_handling:
 #		$t1: hold addr of `input_signal`
 # consumed reg: $t0: hold int 10 to loaded to $f1
 #		$t2: extract char from `buffer`
+#		$t3: a "mark" register for negativity checking
 #		$f0: hold char from `buffer` to converted to float
 #		$f1: hold float 10
 #		$f2: hold float to saved to `input_signal`
-	# Push $t2, $f0, $f1, $f2 into the stack
+	# Push $t2, $t3, $f0, $f1, $f2 into the stack
 	addi $sp, $sp, -4
 	sw $t2, 0($sp)
+	addi $sp, $sp, -4
+	sw $t3, 0($sp)
 	addi $sp, $sp, -4
 	swc1 $f0, 0($sp)
 	addi $sp, $sp, -4
@@ -145,25 +148,40 @@ loop_1_2:
 	lb $t2, 0($t0)			# load char from `buffer`, $t2 now holding ASCII code
 	beq $t2, 0, meet_end		# if meets `\0` (end of file), endloop
 	beq $t2, 32, meet_space		# if meets ` ` (space), save float
+	beq $t2, 45, meet_hyphen	# if meets `-`, set float to negative 1
 	beq $t2, 46, loop_1_2_incre_iterator
 					# if meets `.`, continue
-	
+
+	# Else: ASCII code of a number (0-9)	
 	addi $t2, $t2, -48		# convert ASCII code to number
 					# 48 is ASCII code of 0
 	mtc1 $t2, $f0
 	cvt.s.w $f0, $f0
 	mul.s $f2, $f2, $f1
+	bltz $t3, handle_hyphen
 	add.s $f2, $f2, $f0
 
 loop_1_2_incre_iterator:
 	addi $t0, $t0, 1	# move to the next char of buffer
 	j loop_1_2
-	
+
+
+meet_hyphen:
+	# Set $t3 to -1
+	li $t3, -1
+	j loop_1_2_incre_iterator
+
+handle_hyphen:
+	sub.s $f2, $f2, $f0
+	j loop_1_2_incre_iterator
+
 meet_space:
 	# divide $f2 by 10 to set 1 decimal place
 	div.s $f2, $f2, $f1
 	# save float to signal_input
 	swc1 $f2, 0($t1)
+	
+	li $t3, 0		# reset $t3
 	mtc1 $zero, $f2		# reset $f2
 	addi $t1, $t1, 4	# move to next word of signal_input
 	j loop_1_2_incre_iterator
@@ -174,6 +192,7 @@ meet_end:
 	# save float to signal_input
 	swc1 $f2, 0($t1)
 	
+	li $t3, 0		# reset $t3
 	mtc1 $zero, $f1		# reset $f1
 	mtc1 $zero, $f2		# reset $f2
 	
@@ -183,6 +202,8 @@ meet_end:
 	lwc1 $f1, 0($sp)
 	addi $sp, $sp, 4
 	lwc1 $f0, 0($sp)
+	addi $sp, $sp, 4
+	lw $t3, 0($sp)
 	addi $sp, $sp, 4
 	lw $t2, 0($sp)
 	addi $sp, $sp, 4
@@ -210,6 +231,45 @@ meet_end:
 
 #outloop_1_2_1:
 ##--------
+
+
+## 1.3. Do the same for destired signal (desired.txt - inpFile1)
+sect_1_3:
+la $a0, inpFile1
+jal file_read
+li $a0, 0	# reset $a0
+
+la $t0, buffer
+la $t1, signal_desired
+jal buffer_handling
+li $t0, 0	# reset $t0
+li $t1, 0	# reset $t1
+##--------
+
+
+### 1.3.1. Testing retriving float values from `signal_desired`
+la $t0, signal_desired
+li $t1, 0
+loop_1_2_1:
+	bge $t1, 10, outloop_1_2_1
+	# load value to $f12 to print to console
+	lwc1 $f12, 0($t0)
+    	li $v0, 2
+    	syscall
+    	# print blank space
+    	addi $a0, $zero, ' '
+    	li $v0, 11
+    	syscall
+    	# increment_iterator
+    	addi $t0, $t0, 4
+    	addi $t1, $t1, 1
+    	j loop_1_2_1
+
+outloop_1_2_1:
+##--------
+
+
+j sect_2
 #========
 
 
