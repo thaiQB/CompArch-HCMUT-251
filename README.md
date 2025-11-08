@@ -31,11 +31,11 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 >There are some ways to reset a floating-point register:
 >1. `mtc1 $zero, $f3`
 >2. ```asm
->	li $t0, 0
->	mtc1 $t0, $f0
->	cvt.s.w $f0, $f0
->	add.s $f3, $f0, $f0
->	```
+	li $t0, 0
+	mtc1 $t0, $f0
+	cvt.s.w $f0, $f0
+	add.s $f3, $f0, $f0
+	```
 >3. `sub.s $f3, $f3, $f3`  
 	- Note that this will not work for `NaN`, `InF` values
 >
@@ -44,5 +44,5 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 <br>
 
 >[!Note]
->*Apply to: Sect 2*
+>*Apply to: Sect 2*  
 >There **obviously** must be a better way to compute the autocorrelation and the cross-correlation by using a big loop instead of making seperate loops like I did. But at the moment, I can't seem to figure it out. Sorry for my stupidity.
