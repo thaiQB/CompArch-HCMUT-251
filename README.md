@@ -1,11 +1,10 @@
-# CompArch-HCMUT-251
-ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
+# ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
 According to the tasks derived from the assignment's specification, this files can perform the following:
 - [x] Read the input files `input.txt` and `desired.txt`
 - [x] Return size error if the number of elements in 2 files are different
 - [x] Compute the autocorrelations and cross-correlations of the input signal $x[n]$ and $d[n]$
 - [x] Compute the output signal $y[n]$
-- [ ] Write the result to the output file `output.txt` (this will be handled by my teammate, I'm done for now) 😁
+- [ ] Write the result to the output file `output.txt` (*this will be handled by my teammate, I'm done for now* 😁)
 
 ## Files in this repository
 1. `input.txt`: A text file holding 10 one-decimal place floating-point numbers
