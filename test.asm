@@ -8,6 +8,7 @@ inpFile:		.asciiz "input.txt"
 inpFile1:		.asciiz "desired.txt"
 outFile:		.asciiz "output.txt"
 error_msg:		.asciiz "Error opening file."
+error_msg1:		.asciiz "Error: size not match"
 
 
 
@@ -109,25 +110,31 @@ sect_1_2:
 la $t0, buffer
 la $t1, signal_input
 jal buffer_handling
-li $t0, 0	# reset $t0
-li $t1, 0	# reset $t1
+
+li $t0, 0		# reset $t0
+li $t1, 0		# reset $t1
+add $t5, $t5, $t4	# store num of ele of input signal to $t5
 j sect_1_3
 
 buffer_handling:
 # Procedure `buffer_handling`: Convert the characters in $t0 (`buffer`) to respective FP values in $t1 (`signal_input`)
-# used reg:	$t0: hold addr of `buffer`
-#		$t1: hold addr of `input_signal`
-# consumed reg: $t0: hold int 10 to loaded to $f1
-#		$t2: extract char from `buffer`
-#		$t3: a "mark" register for negativity checking
-#		$f0: hold char from `buffer` to converted to float
-#		$f1: hold float 10
-#		$f2: hold float to saved to `input_signal`
-	# Push $t2, $t3, $f0, $f1, $f2 into the stack
+# used reg:		$t0: hold addr of `buffer`
+#			$t1: hold addr of `input_signal`
+# consumed reg: 	$t0: hold int 10 to loaded to $f1
+#			$t2: extract char from `buffer`
+#			$t3: a "mark" register for negativity checking
+#			$t4: hold num of ele in the buffer
+#			$f0: hold char from `buffer` to converted to float
+#			$f1: hold float 10
+#			$f2: hold float to saved to `input_signal`
+# returned reg:		$t4: num of converted float
+	# Push $t2, $t3, $t4, $f0, $f1, $f2 into the stack
 	addi $sp, $sp, -4
 	sw $t2, 0($sp)
 	addi $sp, $sp, -4
 	sw $t3, 0($sp)
+	addi $sp, $sp, -4
+	sw $t4, 0($sp)
 	addi $sp, $sp, -4
 	swc1 $f0, 0($sp)
 	addi $sp, $sp, -4
@@ -144,6 +151,8 @@ buffer_handling:
 	# Pop $t0 out of the stack
 	lw $t0, 0($sp)
 	addi $sp, $sp, 4
+	# reset $t4
+	li $t4, 0
 
 loop_1_2:
 	lb $t2, 0($t0)			# load char from `buffer`, $t2 now holding ASCII code
@@ -182,6 +191,8 @@ meet_space:
 	div.s $f2, $f2, $f1
 	# save float to signal_input
 	swc1 $f2, 0($t1)
+	# $t4++
+	addi $t4, $t4, 1
 	
 	li $t3, 0		# reset $t3
 	mtc1 $zero, $f2		# reset $f2
@@ -193,6 +204,8 @@ meet_end:
 	div.s $f2, $f2, $f1	# divide $f2 by 10 to set 1 decimal place
 	# save float to signal_input
 	swc1 $f2, 0($t1)
+	# $t4++
+	addi $t4, $t4, 1
 	
 	li $t3, 0		# reset $t3
 	mtc1 $zero, $f1		# reset $f1
@@ -243,8 +256,19 @@ li $a0, 0	# reset $a0
 la $t0, buffer
 la $t1, signal_desired
 jal buffer_handling
-li $t0, 0	# reset $t0
-li $t1, 0	# reset $t1
+
+li $t0, 0			# reset $t0
+li $t1, 0			# reset $t1
+bne $t4, $t5, err_size		# compare num of ele between `input.txt` and `desire.txt`
+j sect_2
+
+err_size:
+# Handle size error
+li $v0, 4
+la $a0, error_msg1
+syscall
+# Terminate program
+j exit
 ##--------
 
 
@@ -664,17 +688,22 @@ outloop_5_1_1:
 # - $f9: Hold h(1)					#
 # - $f10: Hold h(2)					#
 #							#
-# These value CAN BE reused, or cleared depends on	#
+# These registers CAN BE reused, or cleared depends on	#
 # disires of the user of this file, feel free~		#
 #							#
-# Data used for computation are listed by the lables	#
+# Data used in computations are listed by the lables	#
 # below:						#
 # - signal_input: Store data of `input.txt`		#
 # - signal_desired: Store data of `desired.txt`		#
+# - signal_output: Store data of computed output signal #
 # - buffer: Used for processing the input files		#
 # - inpFile: Store string "input.txt"			#
 # - inpFile1: Store string "desired.txt"		#
-# - err_msg: Store the error message			#
+# - err_msg: Store the file error message		#
+# - err_msg1: Store the size error message		#
+#							#
+# These labels MUST BE kept as is, any modification may #
+# result in undefined behaviours or errors.		#
 #########################################################
 
 
