@@ -1,18 +1,33 @@
 # CompArch-HCMUT-251
-Large Assignment - Computer Architecture - Ho Chi Minh city University of Technology - Semester 251
+ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
+According to the tasks derived from the assignment's specification, this files can perform the following:
+- [x] Read the input files `input.txt` and `desired.txt`
+- [x] Return size error if the number of elements in 2 files are different
+- [x] Compute the autocorrelations and cross-correlations of the input signal $x[n]$ and $d[n]$
+- [x] Compute the output signal $y[n]$
+- [ ] Write the result to the output file `output.txt` (this will be handled by my teammate, I'm done for now) 😁
 
 ## Files in this repository
-1. MARS MIPS Simulator 4.5
-	- Can be downloaded at []()
-2. `input.txt`: A text file holding 10 one-decimal place floating-point numbers
+1. `input.txt`: A text file holding 10 one-decimal place floating-point numbers
 	- This served as the **input signal**
-3. `test.asm`: Run this file using the simulator)
-4. `.pdf`: The specification for this large assignment)
+2. `test.asm`: Run this file using the simulator
+3. `.pdf`: The specification for this large assignment
+4. `.py`: This served as an example for testing the computing results. The results of the `.asm` file is required to be the same as the `.py` file.
+5. `Testcase` folder: A folder of testcases (*duh*)
+
+# PREQUISITES
+You'll need these in order to test my work:
+1. MARS MIPS Simulator 4.5
+	- Can be downloaded [here](https://github.com/dpetersanderson/MARS/releases/tag/v.4.5.1)
+	- More info can be found [here](https://dpetersanderson.github.io/index.html) and [there](https://computerscience.missouristate.edu/mars-mips-simulator.htm)
+2. A **testcase** (*to be honest, I still don't know what is the expected result for the output signal :v*)
+	- An `input.txt` and an `output.txt` files containing floating-point numbers (you can see some examples about these files in the `Testcase` folder are required for the test.
+	- A test example can be viewed [here](https://github.com/thaiQB/CompArch-HCMUT-251/releases/tag/alpha)
 
 <br>
 
 >[!Warning]
->It is recommended to put the first 3 files above **in the same directory** in order to run normally.
+>It is recommended to put the files above **in the same directory** in order to run normally.
 
 ## Some notes
 >[!Warning]
