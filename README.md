@@ -7,16 +7,17 @@ According to the tasks derived from the assignment's specification, this files c
 - [ ] Write the result to the output file `output.txt` (*this will be handled by my teammate, I'm done for now* 😁)
 
 ## Files in this repository
-1. `input.txt`: A text file holding 10 one-decimal place floating-point numbers
+1. `source.asm`: Run this file using the simulator
+2. `test.cpp: A C++ file to test the result
+3. `input.txt`: A text file holding 10 one-decimal place floating-point numbers
 	- This served as the **input signal**
-2. `test.asm`: Run this file using the simulator
 3. `.pdf`: The specification for this large assignment
 4. `.py`: This served as an example for testing the computing results. The results of the `.asm` file is required to be the same as the `.py` file.
 5. `Testcase` folder: A folder of testcases (*duh*)
 
 # PREQUISITES
 You'll need these in order to test my work:
-1. MARS MIPS Simulator 4.5
+1. **MARS MIPS Simulator 4.5**
 	- Can be downloaded [here](https://github.com/dpetersanderson/MARS/releases/tag/v.4.5.1)
 	- More info can be found [here](https://dpetersanderson.github.io/index.html) and [there](https://computerscience.missouristate.edu/mars-mips-simulator.htm)
 2. A **testcase** (*to be honest, I still don't know what is the expected result for the output signal :v*)
