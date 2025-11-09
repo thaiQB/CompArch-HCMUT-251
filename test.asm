@@ -2,11 +2,12 @@
 buffer:			.space 256	# 256 bytes for reading buffer
 signal_input:		.space 40 	# 40 bytes for 10 float values
 signal_desired:		.space 40	# //
+signal_output:		.space 40	# //
 
 inpFile:		.asciiz "input.txt"
 inpFile1:		.asciiz "desired.txt"
 outFile:		.asciiz "output.txt"
-error_msg:		.asciiz "Error opening file." 
+error_msg:		.asciiz "Error opening file."
 
 
 
@@ -210,7 +211,6 @@ meet_end:
 	addi $sp, $sp, 4
 	# Return to the caller (of `buffer_handling`)
 	jr $ra
-##--------
 
 ### 1.2.1. Testing retriving float values from `signal_input`
 #la $t0, signal_input
@@ -268,9 +268,6 @@ li $t1, 0	# reset $t1
 
 #outloop_1_2_1:
 ##--------
-
-
-j sect_2
 #========
 
 
@@ -350,7 +347,6 @@ loop_2_3:
 endloop_2_3:
 	# divide $f4 by 10
 	#div.s $f4, $f4, $f1
-##--------
 
 li $t0, 0		# reset $t0
 li $t1, 0		# reset $t1
@@ -358,6 +354,7 @@ li $t2, 0		# reset $t2
 mtc1 $zero, $f0		# reset $f0
 mtc1 $zero, $f1		# reset $f1
 mtc1 $zero, $f5		# reset $f5
+##--------
 #========
 
 
@@ -548,7 +545,137 @@ optimize_coef:
 	addi $sp, $sp, 4
 	lwc1 $f0, 0($sp)
 	addi $sp, $sp, 4
-j exit
+#========
+
+
+
+# 5. CALCULATE OUTPUT SIGNAL y(n)
+## 5.1. Calc of h(0)
+la $t0, signal_input	# input signal
+la $t1, signal_output	# output signal
+jal out_sig_calc
+
+li $t0, 0	# reset $t0
+li $t1, 0	# reset $t1
+j sect_5_1_1
+
+out_sig_calc:
+# Procedure `out_sig_calc`: Calculate the output signal y(n) based on input signal x(n) and filter coefficients h(0), h(1), h(2); then save output signal to `signal_output`
+# used reg		$t0: hold addr of `signal_input`
+#			$t1: hold addr of `signal_output`
+#			$f8: hold h(0)
+#			$f9: hold h(1)
+#			$f10: hold h(2)
+# consumed reg:		$t2: count var
+#			$t3: addr of x[n - k]
+#			$f0: hold extracted value from `signal_input`
+#			$f1: hold tmp val
+# returned reg:		NULL
+	# push $t2, $t3, $f0, $f1 into the stack
+	addi $sp, $sp, -4
+	sw $t2, 0($sp)
+	addi $sp, $sp, -4
+	sw $t3, 0($sp)	
+	addi $sp, $sp, -4
+	swc1 $f0, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f1, 0($sp)
+	# init count var to 0
+	li $t2, 0
+
+loop_5:
+	beq $t2, 10, outloop_5
+	# load x(n)
+	lwc1 $f1, 0($t0)
+	# x(n - 0) * h(0)
+	mul.s $f1, $f1, $f8
+	add.s $f0, $f0, $f1
+	beq $t2, 0, loop_5_incre_iter
+	# x(n - 1) * h(1)
+	addi $t3, $t0, -4
+	lwc1 $f1, 0($t3)
+	mul.s $f1, $f1, $f9
+	add.s $f0, $f0, $f1
+	beq $t2, 1, loop_5_incre_iter
+	# x(n - 2) * h(2)
+	addi $t3, $t3, -4
+	lwc1 $f1, 0($t3)
+	mul.s $f1, $f1, $f10
+	add.s $f0, $f0, $f1
+
+loop_5_incre_iter:
+	# save y(n)
+	swc1 $f0, 0($t1)
+	# increasing iterator
+	addi $t0, $t0, 4
+	addi $t1, $t1, 4
+	addi $t2, $t2, 1
+	mtc1 $zero, $f0		# reset $f0
+	j loop_5
+
+outloop_5:
+	# pop the stack
+	lwc1 $f1, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f0, 0($sp)
+	addi $sp, $sp, 4
+	lw $t3, 0($sp)
+	addi $sp, $sp, 4
+	lw $t2, 0($sp)
+	addi $sp, $sp, 4
+	# end procedure
+	jr $ra
+
+### 5.1.1. Testing float values from `signal_output`
+sect_5_1_1:
+#la $t0, signal_output
+#li $t1, 0
+#loop_5_1_1:
+	#bge $t1, 10, outloop_5_1_1
+	# load value to $f12 to print to console
+	#lwc1 $f12, 0($t0)
+    	#li $v0, 2
+    	#syscall
+    	# print blank space
+    	#addi $a0, $zero, ' '
+    	#li $v0, 11
+    	#syscall
+    	# increment_iterator
+    	#addi $t0, $t0, 4
+    	#addi $t1, $t1, 1
+    	#j loop_5_1_1
+
+outloop_5_1_1:
+##--------
+#========
+
+
+
+#===========END OF TASK 1, TASK 2 AND TASK 3============#
+#							#
+# Residual values in the registers are listed below:	#
+# - $f2: Hold r(0)					#
+# - $f3: Hold r(1)					#
+# - $f4: Hold r(2)					#
+# - $f5: Hold g(0)					#
+# - $f6: Hold g(1)					#
+# - $f7: Hold g(2)					#
+# - $f8: Hold h(0)					#
+# - $f9: Hold h(1)					#
+# - $f10: Hold h(2)					#
+#							#
+# These value CAN BE reused, or cleared depends on	#
+# disires of the user of this file, feel free~		#
+#							#
+# Data used for computation are listed by the lables	#
+# below:						#
+# - signal_input: Store data of `input.txt`		#
+# - signal_desired: Store data of `desired.txt`		#
+# - buffer: Used for processing the input files		#
+# - inpFile: Store string "input.txt"			#
+# - inpFile1: Store string "desired.txt"		#
+# - err_msg: Store the error message			#
+#########################################################
 
 
 
