@@ -281,7 +281,7 @@ sect_2:
 li $t0, 10
 mtc1 $t0, $f1
 cvt.s.w $f1, $f1 # $f1 = 10
-## 2.1. Calc h(0)
+## 2.1. Calc r(0)
 la $t0, signal_input
 li $t1, 0
 
@@ -299,11 +299,11 @@ loop_2_1:
 
 endloop_2_1:
 	# divide $f2 by 10
-	div.s $f2, $f2, $f1	# $f1 value holds from line 97
+	#div.s $f2, $f2, $f1
 ##--------
 
 
-## 2.2. Calc h(1)
+## 2.2. Calc r(1)
 la $t0, signal_input
 li $t1, 0
 
@@ -324,11 +324,11 @@ loop_2_2:
 
 endloop_2_2:
 	# divide $f3 by 10
-	div.s $f3, $f3, $f1
+	#div.s $f3, $f3, $f1
 ##--------
 
 
-## 2.3. Calc h(2)
+## 2.3. Calc r(2)
 la $t0, signal_input
 li $t1, 0
 mtc1 $zero, $f4		# reset $f4
@@ -349,7 +349,7 @@ loop_2_3:
 	
 endloop_2_3:
 	# divide $f4 by 10
-	div.s $f4, $f4, $f1
+	#div.s $f4, $f4, $f1
 ##--------
 
 li $t0, 0		# reset $t0
@@ -364,11 +364,7 @@ mtc1 $zero, $f5		# reset $f5
 
 # 3. CALCULATE CROSS-CORRELATION BETWEEN INPUT SIGNAL x(n) and DESIRED SIGNAL d(n)
 sect_3:
-# Assign an FPU register to 10.0 for later calculations
-li $t0, 10
-mtc1 $t0, $f1
-cvt.s.w $f1, $f1 # $f1 = 10
-## 3.1. Calc r(0)
+## 3.1. Calc g(0)
 la $t0, signal_input
 la $t1, signal_desired
 li $t2, 0			# h (the "lag" of the signal)
@@ -377,7 +373,7 @@ mov.s $f5, $f8
 ##--------
 
 
-## 3.2. Calc r(1)
+## 3.2. Calc g(1)
 la $t0, signal_input
 la $t1, signal_desired
 li $t2, 1
@@ -386,42 +382,66 @@ mov.s $f6, $f8
 ##--------
 
 
-## 3.3. Calc r(2)
+## 3.3. Calc g(2)
 la $t0, signal_input
 la $t1, signal_desired
 li $t2, 2
 jal cross_corr
 mov.s $f7, $f8
 
-mtc1 $zero, $f0		# reset $f0
 mtc1 $zero, $f8		# reset $f8
-mtc1 $zero, $f9		# reset $f9
-j exit
-##--------
-
+j sect_4
 
 cross_corr:
+# Procedure `cross_corr`: Calculate cross-correlation between the input signal and the desired signal
+# used reg:		$t0: hold addr of input signal
+#			$t1: hold addr of desired signal
+#			$t2: the "lag"
+# consumed reg:		$f0: store values loaded from $t0
+#			$f9: store the result of the multiplication before added to $f8
+# returned reg:		$f8: store the result value
+	
+	# push $f0, $f9 into the stack
+	addi $sp, $sp, -4
+	swc1 $f0, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f9, 0($sp)
+	# accessing signal_desired[i + h]
 	sll $t2, $t2, 2		# $t2 *= 4
 	add $t1, $t1, $t2	# d(i + h)
 	srl $t2, $t2, 2		# $t2 /= 4
-	loop_cross:
-		beq $t2, 10, endloop_cross
-		lwc1 $f0, 0($t0)
-		lwc1 $f9, 0($t1)
-		mul.s $f9, $f0, $f9
-		add.s $f8, $f8, $f9
-		# increment iterator
-		addi $t0, $t0, 4
-		addi $t1, $t1, 4
-		addi $t2, $t2, 1
-		j loop_cross
 
-	endloop_cross:
-		jr $ra
+loop_cross:
+	beq $t2, 10, endloop_cross
+	lwc1 $f0, 0($t0)
+	lwc1 $f9, 0($t1)
+	mul.s $f9, $f0, $f9
+	add.s $f8, $f8, $f9
+	# increment iterator
+	addi $t0, $t0, 4
+	addi $t1, $t1, 4
+	addi $t2, $t2, 1
+	j loop_cross
 
+endloop_cross:
+	# pop the stack
+	lwc1 $f9, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f0, 0($sp)
+	addi $sp, $sp, 4
+	# end procedure
+	jr $ra
+##--------
+#========
+
+
+
+# 4. CALCULATE THE OPTIMIZED FILTER COEFFICIENTS
+sect_4:
 j exit
 
-
+# hinh nhu la cach lam cua nhom minh la khong chia N de tinh estimator, ma step 4 step 5 ong kia lam se chia N sau :v
+# sang ra coi lai roi bo cai chia n di la dc :v
 
 
 exit:
