@@ -370,6 +370,8 @@ la $t1, signal_desired
 li $t2, 0			# h (the "lag" of the signal)
 jal cross_corr
 mov.s $f5, $f8
+
+mtc1 $zero, $f8		# reset $f8
 ##--------
 
 
@@ -379,6 +381,8 @@ la $t1, signal_desired
 li $t2, 1
 jal cross_corr
 mov.s $f6, $f8
+
+mtc1 $zero, $f8		# reset $f8
 ##--------
 
 
@@ -438,13 +442,22 @@ endloop_cross:
 
 # 4. CALCULATE THE OPTIMIZED FILTER COEFFICIENTS
 sect_4:
+# A = r(2)^2 - r(1)^2
+# B = r(0) * r(1) − r(1) * r(2)
+# C = r(0)^2 - r(2)^2
+# p = g(1) * r(0) − r(1) * g(0)
+# q = g(2) * r(0) − r(2) * g(0)
+# D = AC − B^2
+# h1 = (p * C − q * B) / D
+# h2 = (q * A − p * B) / D
+# h0 = (g0 − r1 * h1 − r2 * h2) / r0
+
+
 j exit
 
-# hinh nhu la cach lam cua nhom minh la khong chia N de tinh estimator, ma step 4 step 5 ong kia lam se chia N sau :v
-# sang ra coi lai roi bo cai chia n di la dc :v
 
 
-exit:
+exit:	
 # Exit program
 li $v0, 10
 syscall
