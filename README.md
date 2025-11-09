@@ -26,6 +26,11 @@ Large Assignment - Computer Architecture - Ho Chi Minh city University of Techno
 
 <br>
 
+>[!Caution]
+>In the testcases, the files `input.txt` and `desired.txt` have a **trailing space** right after the last number of the series, which affect the **input file handling** of my implementation. I suppose that the **actual testcases** will **not have** this trailling space, so I fixed the input files to match my format (end-of-file after the last number). But am I correct, or there must be a trailing space in the input files?
+
+<br>
+
 >[!Warning]
 >*Apply to: __Sect_1.2__*  
 >The caution above is written after I implemented the file processing for the **single file** `input.txt`, so I had to rework it. It's now working as a **procedure** to process **2 files**: `input.txt` and `desired.txt`.  

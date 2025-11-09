@@ -369,7 +369,7 @@ la $t0, signal_input
 la $t1, signal_desired
 li $t2, 0			# h (the "lag" of the signal)
 jal cross_corr
-mov.s $f5, $f8
+mov.s $f5, $f8		# store result in $f5
 
 mtc1 $zero, $f8		# reset $f8
 ##--------
@@ -380,7 +380,7 @@ la $t0, signal_input
 la $t1, signal_desired
 li $t2, 1
 jal cross_corr
-mov.s $f6, $f8
+mov.s $f6, $f8		# store result in $f6
 
 mtc1 $zero, $f8		# reset $f8
 ##--------
@@ -391,9 +391,12 @@ la $t0, signal_input
 la $t1, signal_desired
 li $t2, 2
 jal cross_corr
-mov.s $f7, $f8
+mov.s $f7, $f8		# store result in $f7
 
 mtc1 $zero, $f8		# reset $f8
+li $t0, 0		# reset $t0
+li $t1, 0		# reset $t1
+li $t2, 0		# reset $t2
 j sect_4
 
 cross_corr:
@@ -452,12 +455,104 @@ sect_4:
 # h2 = (q * A − p * B) / D
 # h0 = (g0 − r1 * h1 − r2 * h2) / r0
 
-
+optimize_coef:
+# Procedure `optimize_coef`: Calculate filter coefficients (not sure whether it is optimized, I just follow my teammate's Python code)
+# used reg:		$f2: hold r(0)
+#			$f3: hold r(1)
+#			$f4: hold r(2)
+#			$f5: hold g(0)
+#			$f6: hold g(1)
+#			$f7: hold g(2)
+# consumed reg:		$f0: hold tmp val
+#			$f1: hold tmp val
+#			$f11: hold A
+#			$f12: hold B
+#			$f13: hold C
+#			$f14: hold p
+#			$f15: hold q
+#			$f16: hold D
+# returned reg:		$f8: hold h(0)
+#			$f9: hold h(1)
+#			$f10: hold h(2)
+	# push $f0, $f1, $f11, $f12, $f13, $f14, $f15, $f16 into stack
+	addi $sp, $sp, -4
+	swc1 $f0, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f1, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f11, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f12, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f13, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f14, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f15, 0($sp)
+	addi $sp, $sp, -4
+	swc1 $f16, 0($sp)
+	# A = r(0)^2 - r(1)^2
+	mul.s $f0, $f2, $f2
+	mul.s $f1, $f3, $f3
+	sub.s $f11, $f0, $f1
+	# B = r(0) * r(1) − r(1) * r(2)
+	mul.s $f0, $f2, $f3
+	mul.s $f1, $f3, $f4
+	sub.s $f12, $f0, $f1
+	# C = r(0)^2 - r(2)^2
+	mul.s $f0, $f2, $f2
+	mul.s $f1, $f4, $f4
+	sub.s $f13, $f0, $f1
+	# p = g(1) * r(0) − r(1) * g(0)
+	mul.s $f0, $f6, $f2
+	mul.s $f1, $f3, $f5
+	sub.s $f14, $f0, $f1
+	# q = g(2) * r(0) − r(2) * g(0)
+	mul.s $f0, $f7, $f2
+	mul.s $f1, $f4, $f5
+	sub.s $f15, $f0, $f1
+	# D = AC − B^2
+	mul.s $f0, $f11, $f13
+	mul.s $f1, $f12, $f12
+	sub.s $f16, $f0, $f1
+	# h1 = (p * C − q * B) / D
+	mul.s $f0, $f14, $f13
+	mul.s $f1, $f15, $f12
+	sub.s $f9, $f0, $f1
+	div.s $f9, $f9, $f16
+	# h2 = (q * A − p * B) / D
+	mul.s $f0, $f15, $f11
+	mul.s $f1, $f14, $f12
+	sub.s $f10, $f0, $f1
+	div.s $f10, $f10, $f16
+	# h0 = (g0 − r1 * h1 − r2 * h2) / r0
+	mul.s $f0, $f3, $f9
+	mul.s $f1, $f4, $f10
+	sub.s $f8, $f5, $f0
+	sub.s $f8, $f8, $f1
+	div.s $f8, $f8, $f2
+	# pop the stack
+	lwc1 $f16, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f15, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f14, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f13, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f12, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f11, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f1, 0($sp)
+	addi $sp, $sp, 4
+	lwc1 $f0, 0($sp)
+	addi $sp, $sp, 4
 j exit
 
 
 
-exit:	
+exit:
 # Exit program
 li $v0, 10
 syscall
