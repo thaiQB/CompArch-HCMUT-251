@@ -1,4 +1,4 @@
-*UPDATE: MY TEAMMATES HAVE ALREADY FINISHED THE SOURCE FILE, BUT IT DOESN'T SEEM TO WORK WELL WITH THE 3^rd PARTY TESTCASES. FOR MORE INFORMATION, SEE [HERE](https://github.com/thaiQB/CompArch-HCMUT-251/tree/beta)*
+*UPDATE: MY TEAMMATES HAVE ALREADY FINISHED THE SOURCE FILE, BUT IT DOESN'T SEEM TO WORK WELL WITH THE 3<sup>rd</sup> PARTY TESTCASES. FOR MORE INFORMATION, SEE [HERE](https://github.com/thaiQB/CompArch-HCMUT-251/tree/beta)*
 # ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
 According to the tasks derived from the assignment's specification, this files can perform the following:
 - [x] Read the input files `input.txt` and `desired.txt`
