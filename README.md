@@ -1,4 +1,4 @@
-*THIS IS THE `beta` BRANCH, WHERE I TEST THE FINISHED CODE SENT BY MY TEAMMATES, FOR MY IMPLEMENTATION, SEE THE [`main-alpha]()` BRANCH*
+*THIS IS THE `beta` BRANCH, WHERE I TEST THE FINISHED CODE SENT BY MY TEAMMATES, FOR MY IMPLEMENTATION, SEE THE [`main-alpha` BRANCH](https://github.com/thaiQB/CompArch-HCMUT-251/tree/main-alpha)*
 # ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
 According to the tasks derived from the assignment's specification, this files can perform the following:
 - [x] Read the input files `input.txt` and `desired.txt`

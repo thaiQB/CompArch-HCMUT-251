@@ -7,7 +7,7 @@ git add source.asm
 git add CA_Assignment_251_1.pdf
 git add Refs
 git add sync.sh
-git add final.asm
+git add src_beta.asm
 
 git commit
 git push
