@@ -1,0 +1,20 @@
+Case 4 - Same-frequency interference (hard test)
+-------------------------------------------------
+Parameters:
+- Desired signal: d[n] = sin(2π . 0.25 . n)
+- White noise σ = 0.25
+- Sinusoidal noise amplitude = 0.15, frequency = 0.26 (slightly higher than the desired 0.25), phase shift = 90 degrees
+
+Reasoning:
+- This case simulates a near-overlapping interference scenario where the 
+interference frequency is extremely close to the desired signal but not identical. 
+- The small detuning (Δf = 0.01) causes a slow “beating” effect 
+that makes the desired and interference alternate between reinforcing and cancelling each other over time.
+- Additionally, a 90-degree phase shift ensures the signals are not perfectly aligned,
+and σ = 0.25 introduces strong Gaussian noise, creating a dense and unstable mixture. 
+- Because the Wiener filter assumes stationary and linearly correlated noise,
+it cannot accurately reconstruct this signal, leading to a visibly distorted output and a significantly higher MMSE.
+
+Purpose:
+- To model the practical limit of Wiener filtering when faced with nearly indistinguishable signal and interference components. 
+- Demonstrates the filter’s breakdown under correlated and high-power noise.

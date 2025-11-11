@@ -1,0 +1,15 @@
+Case 1 - Simple sine wave (mild noise)
+---------------------------------------
+Parameters:
+- Desired signal: d[n] = sin(2π . 0.2 . n)
+- White noise σ = 0.1
+- Sinusoidal noise amplitude = 0.1, frequency = 0.3
+
+Reasoning:
+- σ = 0.1 introduces a low-level Gaussian disturbance that still allows the sine wave to be visible - a good test for basic correctness.
+- The sinusoidal interference has a slightly higher frequency (0.3) than the main signal (0.2), ensuring no spectral overlap.
+-> This allows the Wiener filter to effectively suppress the interference by leveraging frequency-domain separability.
+
+Purpose:
+- Acts as a baseline scenario to confirm that the filter correctly estimates the underlying sinusoid with low MMSE.
+- Also establishes the expected visual pattern for subsequent, more complex testcases.

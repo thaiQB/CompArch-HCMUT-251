@@ -1,0 +1,21 @@
+Case 3 - Chirp signal (adaptive tracking)
+------------------------------------------
+Parameters:
+- Desired signal: d[n] = sin(2π . (0.1 + 0.02n) . n) (frequency gradually increases with time)
+- White noise σ = 0.1
+- Sinusoidal noise amplitude = 0.1, frequency = 0.25
+
+Reasoning:
+- The chirp introduces non-stationarity (the signal’s frequency content changes over time).
+- The Wiener filter is designed for stationary inputs, so this case tests its tracking limitation.
+- σ and amplitude both set to 0.1 to focus on time variation rather than strong noise.
+- Interference frequency (0.25) intersects the chirp’s frequency band, making it realistic for systems where signal and noise overlap briefly in time.
+
+Purpose:
+- Evaluates whether the filter can track a time-varying desired signal and how MMSE fluctuates across changing conditions.
+- Expected to yield moderate MMSE and a visibly time-shifted output.
+
+IMPORTANT NOTE:
+Although the chirp signal conceptually represents a time-varying, non-stationary signal, its frequency variation is minimal across the 10 sample window used in this experiment.
+Consequently, the Wiener filter still models it effectively, resulting in a slightly lower MMSE than the two-tone signal (Case 2).
+In longer sequences, where the chirp frequency changes more significantly, we would expect its MMSE to surpass that of the two-tone case.

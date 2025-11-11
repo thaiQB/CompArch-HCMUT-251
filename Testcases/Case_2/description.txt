@@ -1,0 +1,16 @@
+Case 2 - Two-tone signal (moderate noise)
+------------------------------------------
+Parameters:
+- Desired signal: d[n] = sin(2π . 0.15 . n) + 0.5 sin(2π . 0.3 . n)
+- White noise σ = 0.1
+- Sinusoidal noise amplitude = 0.15, frequency = 0.2
+
+Reasoning:
+- The desired signal combines two frequency components, representing a more complex input (e.g., speech or instrument tone).
+- σ = 0.1 keeps Gaussian noise at a manageable level, maintaining interpretability of each tone.
+- The interference frequency (0.2) lies between the two tones, partially overlapping both - ideal for showing partial correlation and a moderate MMSE increase.
+- The amplitude 0.15 ensures the interference is visible but not dominant.
+
+Purpose:
+- Tests the filter’s ability to handle multi-frequency content and maintain stable coefficient estimation across correlated signals.
+- Demonstrates that Wiener filtering still works under partial spectral overlap.
