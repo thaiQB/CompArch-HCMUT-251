@@ -1,4 +1,4 @@
-*UPDATE: MY TEAMMATES HAVE ALREADY FINISHED THE SOURCE FILE, BUT IT DOESN'T SEEM TO WORK WELL WITH THE 3^rd PARTY TESTCASES. FOR MORE INFORMATION, SEE [HERE]()*
+*UPDATE: MY TEAMMATES HAVE ALREADY FINISHED THE SOURCE FILE, BUT IT DOESN'T SEEM TO WORK WELL WITH THE 3^rd PARTY TESTCASES. FOR MORE INFORMATION, SEE [HERE](https://github.com/thaiQB/CompArch-HCMUT-251/tree/beta)*
 # ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
 According to the tasks derived from the assignment's specification, this files can perform the following:
 - [x] Read the input files `input.txt` and `desired.txt`
@@ -13,7 +13,8 @@ According to the tasks derived from the assignment's specification, this files c
 3. `test.cpp`: A C++ file to test the result of **autocorrelation** and **cross-correlation**
 4. `test.py`: This served as an example for testing the computing results. The results of the `.asm` file is required to be the same as the `.py` file.
 5. `Testcase` folder: A folder of testcases (*duh*)
-6. `Refs` folder: A folder of references for the computation methods (*believe me, I tried my best to find the ones writing the math formulas as simple as possible. Please, I'm not a mad scientist to read the symbols in those MIT and MATLAB's documents 😓)
+6. `Refs` folder: A folder of references for the computation methods (*believe me, I tried my best to find the ones writing the math formulas as simple as possible. Please, I'm not a mad scientist, or a gifted student (how said~) to be albe to read the symbols in those MIT and MATLAB's documents 😓)
+	- `Gaussian.pdf`: This is my teammate approach to solve the problem by hand. Based on this, he implement the python code (yes, the `test.py` file, if you're asking) and I, based on his Python code, implement the MIPS code :v
 
 # PREQUISITES
 You'll need these in order to test my work:
