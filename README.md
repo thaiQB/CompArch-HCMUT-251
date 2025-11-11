@@ -1,3 +1,4 @@
+*UPDATE: MY TEAMMATES HAVE ALREADY FINISHED THE SOURCE FILE, BUT IT DOESN'T SEEM TO WORK WELL WITH THE 3^rd PARTY TESTCASES. FOR MORE INFORMATION, SEE [HERE]()*
 # ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
 According to the tasks derived from the assignment's specification, this files can perform the following:
 - [x] Read the input files `input.txt` and `desired.txt`
@@ -7,13 +8,12 @@ According to the tasks derived from the assignment's specification, this files c
 - [ ] Write the result to the output file `output.txt` (*this will be handled by my teammate, I'm done for now* 😁)
 
 ## Files in this repository
-1. `source.asm`: Run this file using the simulator
-2. `test.cpp: A C++ file to test the result
-3. `input.txt`: A text file holding 10 one-decimal place floating-point numbers
-	- This served as the **input signal**
-3. `.pdf`: The specification for this large assignment
-4. `.py`: This served as an example for testing the computing results. The results of the `.asm` file is required to be the same as the `.py` file.
+1. `CA_Assignment_251_1.pdf`: The specification for this large assignment
+2. `source.asm`: Run this file using the simulator
+3. `test.cpp`: A C++ file to test the result of **autocorrelation** and **cross-correlation**
+4. `test.py`: This served as an example for testing the computing results. The results of the `.asm` file is required to be the same as the `.py` file.
 5. `Testcase` folder: A folder of testcases (*duh*)
+6. `Refs` folder: A folder of references for the computation methods (*believe me, I tried my best to find the ones writing the math formulas as simple as possible. Please, I'm not a mad scientist to read the symbols in those MIT and MATLAB's documents 😓)
 
 # PREQUISITES
 You'll need these in order to test my work:

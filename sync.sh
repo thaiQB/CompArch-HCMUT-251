@@ -6,6 +6,7 @@ git add test.py
 git add source.asm
 git add CA_Assignment_251_1.pdf
 git add Refs
+git add sync.sh
 
 git commit
 git push
