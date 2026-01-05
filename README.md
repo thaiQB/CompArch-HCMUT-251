@@ -5,7 +5,7 @@
 >[!Caution]
 >My teammates said that this MIPS file **fails all Votien's testcases**, the reason is our computed values for the output signal have **differences of 0.x** for each values comparing to Votien's.  
 >  
->*Update 11/11/25: I asked another guy who passed the testcases, and he said he set **M = 10** for the computations, meanwhile our group set **M = 3**. I think that is the reason why our results have errors. But seems like we have accepted our fate, since tomorrow is the report day 😭*
+>*Update 11/11/25: I asked another guy who passed the testcases, and he said he set **M = 10** for the computations, meanwhile our group set **M = 3**. I think that is the reason why our results have errors. But seems like we have accepted our fate, since tomorrow is already the report day* 😭  
 >*Update 5/1/26: We got 10 grade omggggg!!!!!*
 
 # ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
@@ -17,13 +17,14 @@ According to the tasks derived from the assignment's specification, this files c
 - [x] Write the result to the output file `output.txt`
 
 ## Files In This repository
-1. `CA_Assignment_251_1.pdf`: The specification for this large assignment
-2. `src_beta.asm`: Run this file using the simulator
+1. `CA_Assignment_251_2.pdf`: The specification for this large assignment
+2. `CO2008_Assignment_CC04_Group08.asm`: Our final source file
 3. `test.cpp`: A C++ file to test the result of **autocorrelation** and **cross-correlation**
 4. `test.py`: This served as an example for testing the computing results. The results of the `.asm` file is required to be the same as the `.py` file.
-5. `Testcase` folder: A folder of testcases (*duh*)
-6. `Refs` folder: A folder of references for the computation methods (*believe me, I tried my best to find the ones writing the math formulas as simple as possible. Please, I'm not a mad scientist or a gifted student (how sad~) to read the advanced mathematical symbols in those MIT and MATLAB's documents 😓)
-	- `Gaussian.pdf`: This is my teammate approach to solve the problem by hand. Based on this, he implement the python code (yes, the `test.py` file, if you're asking) and I, based on his Python code, implement the MIPS code :v
+5. `Testcase` folders: Folders of testcases (*duh*)
+6. `Refs` folder: A folder of references for the computation methods (*believe me, I tried my best to find the ones writing the math formulas as simple as possible. Please, I'm not a mad scientist or a gifted student (how sad~) to read the advanced mathematical symbols in those MIT and MATLAB's documents* 😓)
+	- `Gaussian.pdf`: This is my teammate approach to solve the problem by hand. Based on this, he implemented the Python code (*yes, the `test.py` file, if you're asking*) and I, based on his Python code, implemented the MIPS code :v
+7. `report_final.pdf`: Our report document
 
 # PREQUISITES
 You'll need these in order to test my work:
