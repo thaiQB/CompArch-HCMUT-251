@@ -6,6 +6,7 @@
 >My teammates said that this MIPS file **fails all Votien's testcases**, the reason is our computed values for the output signal have **differences of 0.x** for each values comparing to Votien's.  
 >  
 >*Update 11/11/25: I asked another guy who passed the testcases, and he said he set **M = 10** for the computations, meanwhile our group set **M = 3**. I think that is the reason why our results have errors. But seems like we have accepted our fate, since tomorrow is the report day 😭*
+>*Update 5/1/26: We got 10 grade omggggg!!!!!*
 
 # ASSIGNMENT: FILTERING AND PREDICTION SIGNAL WITH WIENER FILTER
 According to the tasks derived from the assignment's specification, this files can perform the following:
