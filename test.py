@@ -83,7 +83,9 @@ with open("output.txt", "w", encoding="utf-8") as f:
 
 
 # Plot results
-"""
+'"""'
+a = np.arr([])
+b = np.arr([])
 time_samples = N
 t = np.arange(time_samples)
 plt.figure(figsize=(10, 5))
@@ -97,4 +99,4 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show()
-"""
+'"""'

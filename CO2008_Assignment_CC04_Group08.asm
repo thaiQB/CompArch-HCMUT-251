@@ -6,7 +6,6 @@ output_signal:		.space 40	# //
 optimize_coefficient: 	.space 12
 mmse:                 	.space 4 
 
-.align 2 
 
 inpFile:		.asciiz "input.txt"
 inpFile1:		.asciiz "desired.txt"
